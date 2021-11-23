@@ -4,9 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.example.demo.model.Attendance;
+import com.example.demo.model.UserInfo;
+import com.example.demo.repository.AttendanceRepository;
+import com.example.demo.repository.UserInfoRepository;
 
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
@@ -16,11 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import com.example.demo.model.Attendance;
-import com.example.demo.model.UserInfo;
-import com.example.demo.repository.AttendanceRepository;
-import com.example.demo.repository.UserInfoRepository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import lombok.RequiredArgsConstructor;
 
@@ -104,5 +109,32 @@ public class AMSController {
             }
             return "redirect:/mypage";
             
+        }
+        
+        @GetMapping("/attendancebook")
+        public String showAttendanceBook(Authentication loginUser, Model model) {
+            changeAttendanceBook(userRepository.findByUsername(loginUser.getName()).getId(), Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Calendar.getInstance().get(Calendar.MONTH) > 6 ? "後期" : "前期", model);
+            
+            return "attendancedook";
+        }
+        
+        @GetMapping("/attendancebook/{selecteduserid}/{selectedyear}/{selectedperiod}")
+        public String changeAttendanceBook(@PathVariable("selecteduserid") long userId, @PathVariable("selectedyear") String selectedyear, @PathVariable("selectedperiod") String selectedperiod, Model model){
+            Set<String> attendanceSet = new HashSet<>();
+            Set<String> yearsSet = new HashSet<>();
+            
+            UserInfo userInfo = userRepository.findById(userId);
+            attendRepository.findByUserInfo(userInfo).stream().forEach(a -> attendanceSet.add(new SimpleDateFormat("yyyyMMdd").format(a.getAttendanceTime())));	//出勤情報の年月日を格納
+            attendRepository.findByUserInfo(userInfo).stream().forEach(a -> yearsSet.add(new SimpleDateFormat("yyyy").format(a.getAttendanceTime())));	//年の選択候補を格納（降順
+    
+            model.addAttribute("userlist", userRepository.findAll());
+            model.addAttribute("selecteduser", userInfo);
+            model.addAttribute("selectyearlist", yearsSet.stream().sorted(Comparator.reverseOrder()).toArray());					//年の選択候補（降順）
+            model.addAttribute("selectedyear", selectedyear);																		//選択した年（デフォルトは今年）
+            model.addAttribute("selectedperiod", selectedperiod.equals("後期") ? "後期" : "前期");						              //期間の選択候補（デフォルトは今の期間）
+            model.addAttribute("scopeofmonth", selectedperiod.equals("後期") ? new String[]{"7","12"} : new String[]{"1","6"});     //期間の数値設定
+            model.addAttribute("attendanceSet",attendanceSet);																	    //出勤情報の年月日のみ渡す
+            System.out.println(selectedperiod);
+            return "attendancedook::main-content";
         }
 }

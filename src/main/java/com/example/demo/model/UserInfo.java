@@ -27,6 +27,9 @@ public class UserInfo {
     @UniqueLogin
     private String username;//職員ID
 
+    private String lastName;
+    private String firstName;
+    
     @Size(min = 4, max = 255)
     private String password;
 
