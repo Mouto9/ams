@@ -8,16 +8,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueLoginValidator.class)
-public @interface UniqueLogin {
-    String message() default "この職員IDは既に登録されています";
+@Constraint(validatedBy = AttendValidator.class)
+public @interface Attend {
+    String message() default "様式に合っていません";
     Class<?>[] groups() default{};
     Class<? extends Payload>[] payload() default{};
-    String[] fields();
-
-	  public @interface List {
-		  UniqueLogin[] value();
-	  }
 }

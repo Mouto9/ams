@@ -17,16 +17,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@UniqueLogin(fields = {"id","username"})
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)//DBのID列を使用してキーの自動採番を行う
     																					//（）内は採番をSQLとWEBで一致させるため
     private Long id;
     
-    @Size(min = 2, max = 4)
-    @UniqueLogin
+    @Size(min = 4, max = 4,message="4文字で入力してください")
     private String username;//職員ID
-
+    
+    private String lastName;//苗字
+    private String firstName;//氏名
+    
     @Size(min = 4, max = 255)
     private String password;
 

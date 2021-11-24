@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			dayCellContent: function(e) {
     		e.dayNumberText = e.dayNumberText.replace('日', '');
 			},
+			eventMouseEnter: function(mouseEnterInfo){
+				mouseEnterInfo.event = eventSources;
+				mouseEnterInfo.element = title;
+				
+			},
 			eventSources:[
 				{
 					url:'/allScheduleURL',

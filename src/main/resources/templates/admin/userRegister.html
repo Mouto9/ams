@@ -39,8 +39,25 @@
                   職員ID
                 </label>
                 <input class="form-control" type="text"
-                  th:errorclass="is-invalid" th:field="*{username}">
+                  th:errorclass="is-invalid" placeholder="システム○○学期+出席番号2ケタ" th:field="*{username}">
                 <div class="invalid-feedback" th:errors="*{username}">
+                </div>
+              </div>
+              
+              <label for="username" class="form-label">
+                  <span class="badge bg-danger">必須</span>
+                  職員名
+                </label>
+              <div class="input-group mb-3">
+                <span class="input-group-text">性</span>
+                <input class="form-control" type="text"
+                  th:errorclass="is-invalid" th:field="*{lastName}">
+                <div class="invalid-feedback" th:errors="*{lastName}">
+                </div>
+                <span class="input-group-text">名</span>
+                <input class="form-control" type="text"
+                  th:errorclass="is-invalid" th:field="*{firstName}">
+                <div class="invalid-feedback" th:errors="*{firstName}">
                 </div>
               </div>
 

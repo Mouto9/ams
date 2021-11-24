@@ -11,6 +11,7 @@ import com.example.demo.model.UserInfo;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 	Schedule findById(long id);
+	List<Schedule>findAllByOrderByScheduleDate();
 	List<Schedule> findByUserInfo(UserInfo userInfo);
 	List<Schedule> findByScheduleDate(Date date);
 	List<Schedule> findByScheduleDateAndScheduleName(Date date, String name);

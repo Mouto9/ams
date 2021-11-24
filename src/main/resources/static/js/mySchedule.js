@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			themeSystem: 'bootstrap',
         	contentHeight: 'auto',
         	showNonCurrentDates: false,
+        	dayMaxEventRows: true,
+			view: {
+				dayGridMonth: {
+					dayMaxEventRows: 1
+				}
+			},
 			dayCellContent: function(e) {
     		e.dayNumberText = e.dayNumberText.replace('日', '');
 			},
@@ -13,12 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				mouseEnterInfo.element = title;
 				
 			},
-			eventSources:[
-				{
-					url:'/myScheduleURL',
-					
-				}
-			]
+			eventSources:{
+				url:'/myScheduleURL'
+			}
 
         });
         calendar.render();

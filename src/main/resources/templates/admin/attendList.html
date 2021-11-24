@@ -27,7 +27,7 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                 <label th:text="${users.username}"></label>
-                さんの出勤時刻
+                さんの出勤時刻参照
               </h6>
             </div>
             <div class="card-body table-responsive">
@@ -36,7 +36,7 @@
 		              <table id="user-table" class="table table-bordered">
 		                <thead>
 		                  <tr>
-		                    <th>押下時間</th>
+		                    <th>出勤時間</th>
 		                    <th></th>
 		                  </tr>
 		                </thead>
@@ -48,10 +48,28 @@
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	編集
 							                </a>
-						                    <a th:href="@{/admin/attendDelete/{id}(id=*{id})}" class="btn btn-danger">
+						                    <a  class="btn btn-danger"
+						                    data-bs-toggle="modal" data-bs-target="#exampleModal">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	削除
 							                </a>
+							                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+												  <div class="modal-dialog">
+												    <div class="modal-content">
+												      <div class="modal-header">
+												        <h5 class="modal-title" id="exampleModalLabel">確認</h5>
+												        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+												      </div>
+												      <div class="modal-body">
+												        本当に削除しますか？
+												      </div>
+												      <div class="modal-footer">
+												        <a class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</a>
+												        <a th:href="@{/admin/attendDelete/{id}(id=*{id})}" class="btn btn-danger">削除</a>
+												      </div>
+												    </div>
+												  </div>
+												</div>
 						                    </td>
 						    </tr>
 		                </tbody>

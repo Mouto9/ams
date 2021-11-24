@@ -9,9 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-
 public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Object> {
-
 
 	// バリデーション対象の変数の値を入れる
 	  private String[] fields;
@@ -37,9 +35,21 @@ public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Ob
 		c.setTime(s);
 		int s2 = c.get(Calendar.MONTH);
 		int s1 = c.get(Calendar.DAY_OF_MONTH);
+		int sy = c.get(Calendar.YEAR);
 		c.setTime(e);
 		int e2 = c.get(Calendar.MONTH);
 		int e1 = c.get(Calendar.DAY_OF_MONTH);
+		int ey = c.get(Calendar.YEAR);
+		
+		if(!(sy >= 2000 && sy <= 3000) || !(ey >= 2000 && ey <= 3000))  {
+			context.disableDefaultConstraintViolation();
+		    context.buildConstraintViolationWithTemplate("想定以上又は以下の西暦が入力されています").addPropertyNode(fields[0])
+		        .addConstraintViolation();
+		    context.buildConstraintViolationWithTemplate("想定以上又は以下の西暦が入力されています").addPropertyNode(fields[1])
+	        .addConstraintViolation();
+			
+			return false;
+		}
 		
 		if(e2 != s2) {
 			context.disableDefaultConstraintViolation();

@@ -28,7 +28,7 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                <label th:text="${user.username}"></label>
-                さんの勤怠情報
+                さんの勤怠情報参照
               </h6>
             </div>
             <div class="card-body">
@@ -50,9 +50,27 @@
 								                    <a th:href="@{/admin/scheduleEdit/{id}(id=*{id})}" class="btn btn-warning">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	編集</a>
-								                    <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}" class="btn btn-danger">
+								                    <a class="btn btn-danger"
+								                    data-bs-toggle="modal" data-bs-target="#exampleModal">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	削除</a>
+								                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+													  <div class="modal-dialog">
+													    <div class="modal-content">
+													      <div class="modal-header">
+													        <h5 class="modal-title" id="exampleModalLabel">確認</h5>
+													        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													      </div>
+													      <div class="modal-body">
+													        本当に削除しますか？
+													      </div>
+													      <div class="modal-footer">
+													        <a class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</a>
+													        <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}"class="btn btn-danger">削除</a>
+													      </div>
+													    </div>
+													  </div>
+													</div>
 								                    </td>
 								    </tr>
 								    

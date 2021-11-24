@@ -6,7 +6,6 @@
   <meta charset="UTF-8" th:remove="tag">
 </head>
 <body>
-
   <!-- コンテンツの表示 -->
   <main layout:fragment="content" class="bg-image">
     <div class="container">
@@ -26,7 +25,7 @@
             <form th:action="@{/login}" method="post">
               <div class="mb-3">
                 <input class="form-control" type="text"
-                  name="username" placeholder="職員氏名">
+                  name="username" placeholder="職員ID">
               </div>
 
               <div class="mb-3">
@@ -34,13 +33,13 @@
                   name="password" placeholder="パスワード">
               </div>
 
-              <div class="mb-3 form-check">
+              <!-- <div class="mb-3 form-check">
                 <input class="form-check-input" type="checkbox"
                   id="remember-me" name="remember-me">
                 <label class="form-check-label" for="remember-me">
                   ログインしたままにする
                 </label>
-              </div>
+              </div> -->
 
               <button class="w-100 btn btn-navy" type="submit">
                 ログイン

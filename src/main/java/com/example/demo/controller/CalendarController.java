@@ -58,6 +58,7 @@ public class CalendarController {
             	CalendarBuf schedule = new CalendarBuf();
             	schedule.setTitle(attendedFormat.format(attendedList.get(i).getAttendanceTime()));
             	schedule.setStart(attendedList.get(i).getAttendanceTime());
+            	schedule.setColor("#5B6B6C");
             	schedules.add(schedule);
             }
             jsonMsg = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedules);

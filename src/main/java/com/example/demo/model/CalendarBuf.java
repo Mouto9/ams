@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,9 +16,8 @@ public class CalendarBuf {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date end;
 	
-	private List<UserInfo> userList;
-	private List<Long> userInfoIdList = new ArrayList<>();
-	private List<String> name;
+	private UserInfo user;
+
 	private String color;
 	private long id;
 	

@@ -11,6 +11,7 @@ import com.example.demo.model.UserInfo;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 	Attendance findById(long id);
+	List<Attendance>findAllByOrderByAttendanceTimeDesc();
 	List<Attendance> findByAttendanceTimeBetween(Date st,Date en);
 	List<Attendance> findByUserInfo(UserInfo userInfo);
 	@Transactional

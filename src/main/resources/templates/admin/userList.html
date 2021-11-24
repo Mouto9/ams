@@ -33,6 +33,7 @@
                 <thead>
                   <tr>
                     <th>職員ID</th>
+                    <th>職員名</th>
                     <th></th>
                     <th>本日の勤怠予定</th>
                     <th></th>
@@ -46,10 +47,12 @@
                   <tr th:each="user : ${users}" th:object="${user}">
                     <td th:text="*{username}">
                     </td>
+                    <td> [[*{lastName}]][[*{firstName}]]
+                    </td>
                     <td>
-                    	<a th:href="@{/admin/userEdit/{id}(id=*{id})}" class="btn btn-navy">
-                    	<i class="bi bi-pencil-square"></i>
-                    	</a>
+                    	<a th:href="@{/admin/userEdit/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">
+                    	<i class="bi bi-trach-fill"></i>
+							                    	編集</a>
                     </td>
                     
                     <td >
@@ -60,9 +63,9 @@
                     	</div>
                     </td>
                     <td>
-                    	<a th:href="@{/admin/scheduleList/{id}(id=${user.id})}" class="btn btn-outline-success">
-                    	<i class="bi bi-pencil-square"></i>
-                    	</a>
+                    	<a th:href="@{/admin/scheduleList/{id}(id=${user.id})}" class="btn btn-outline-success btn-sm">
+                    	<i class="bi bi-trach-fill"></i>
+						参照</a>
                     </td>
                     <td >
                     	<div th:each="attend: ${attend}" th:object="${attend}">
@@ -72,14 +75,32 @@
                     	</div>
                     </td>
                     <td>
-                    	<a th:href="@{/admin/attendList/{id}(id=${user.id})}" class="btn btn-outline-secondary">
-                    	<i class="bi bi-pencil-square"></i>
-                    	</a>
+                    	<a th:href="@{/admin/attendList/{id}(id=${user.id})}" class="btn btn-outline-secondary btn-sm">
+                    	<i class="bi bi-trach-fill"></i>
+							 参照</a>
                     </td>
                      <td>
-                    	<a th:href="@{/admin/delete/{id}(id=*{id})}" class="btn btn-danger">
+                    	<a class="btn btn-danger btn-sm"
+                    	data-bs-toggle="modal" data-bs-target="#exampleModal">
                     	<i class="bi bi-trach-fill"></i>
                     	削除</a>
+                    	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <h5 class="modal-title" id="exampleModalLabel">確認</h5>
+							        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							      </div>
+							      <div class="modal-body">
+							        本当に削除しますか？
+							      </div>
+							      <div class="modal-footer">
+							        <a class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</a>
+							        <a th:href="@{/admin/delete/{id}(id=*{id})}" class="btn btn-danger">削除</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
                     </td>
                   </tr>
                 </tbody>

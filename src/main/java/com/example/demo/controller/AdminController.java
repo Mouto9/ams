@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.model.Attendance;
+import com.example.demo.model.CalendarBuf;
 import com.example.demo.model.Schedule;
 import com.example.demo.model.ScheduleRegister;
 import com.example.demo.model.UserInfo;
@@ -62,7 +63,6 @@ public class AdminController {
     	public String scheduleRegister(@Validated @ModelAttribute("calendarBuf") ScheduleRegister sr,BindingResult result,Model model) {
     	
     	if (result.hasErrors()) {
-    		
     		return scheduleRegister(model,sr);
     	}
     	
@@ -119,9 +119,10 @@ public class AdminController {
     	sName.put("001", "出勤");
         sName.put("002", "休暇");
         sName.put("003", "年休");
-        sName.put("004", "時給");
+        sName.put("004", "特休");
         sName.put("005", "テレ");
         sName.put("006","夏休");
+        sName.put("007","出張");
         model.addAttribute("sName",sName);
            model.addAttribute("default","002");
           return "admin/scheduleEdit";
@@ -155,15 +156,28 @@ public class AdminController {
     	return "admin/attendList";
     }
     
-    @GetMapping("/admin/attendEdit/{id}")
-   public String saveAttend(@PathVariable long id, Model model) {
-                  model.addAttribute("attend", attendanceRepository.findById(id));
+    @GetMapping("/admin/attendEdit/{id}")//CalendarBufで
+   public String saveAttend(@PathVariable long id, Model model,CalendarBuf buf) {
+    	Attendance attendance = attendanceRepository.findById(id);
+    	SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+    	String st = df.format(attendance.getAttendanceTime());
+    	buf.setTitle(st);
+    	buf.setStart(attendance.getAttendanceTime());
+    	buf.setId(attendance.getId());
+    	buf.setUser(attendance.getUserInfo());
+    	model.addAttribute("attend",buf);
           return "admin/attendEdit";
     }
     
   @PostMapping("/admin/attendEdit")
-   public String editAttend(@Validated @ModelAttribute("attend") Attendance attendance, BindingResult result) {
-	  long tmp = attendance.getUserInfo().getId();
+   public String editAttend(@Validated @ModelAttribute("attend") CalendarBuf buf,Attendance attendance, BindingResult result) throws ParseException {
+	  attendance.setId(buf.getId());
+	  attendance.setUserInfo(buf.getUser());
+	  SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	  String d = df.format(buf.getStart()) + " " +buf.getTitle();
+	  SimpleDateFormat dfset = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	  attendance.setAttendanceTime(dfset.parse(d));
+	  long tmp = buf.getUser().getId();
           if (result.hasErrors()) {
               return "admin/allSchedule";
           }
