@@ -1,5 +1,15 @@
 package com.example.demo.util;
 
+/**
+ * 権限。
+ */
 public enum Role {
-    ADMIN, USER
+    /**
+     * 管理者。
+     */
+    ADMIN, 
+    /**
+     * 一般。 
+     */
+    USER
 }

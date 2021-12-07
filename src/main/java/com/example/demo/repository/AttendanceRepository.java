@@ -9,10 +9,34 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.model.Attendance;
 import com.example.demo.model.UserInfo;
 
+/**
+ * 出勤情報リポジトリ。
+ */
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
+	/**
+	 * @param id 出勤情報テーブルID。
+	 * @return 出勤情報。
+	 */
 	Attendance findById(long id);
-	List<Attendance> findByAttendanceTimeBetween(Date st,Date en);
-	List<Attendance> findByUserInfo(UserInfo userInfo);
+	/**
+	 * @return 出勤情報リスト。
+	 */
+	List<Attendance>findAllByOrderByAttendanceTimeDesc();
+	/**
+	 * @param start 開始時間。
+	 * @param end 終了時間。
+	 * @param user 職員情報。
+	 * @return 真偽値。
+	 */
+	Boolean existsByAttendanceTimeBetweenAndUserInfo(Date start,Date end,UserInfo user);
+	/**
+	 * @param user 職員情報。
+	 * @return 職員情報リスト。
+	 */
+	List<Attendance> findByUserInfo(UserInfo user);
+	/**
+	 * @param id 職員情報テーブルID。
+	 */
 	@Transactional
 	void deleteByUserInfoId(long id);
 }

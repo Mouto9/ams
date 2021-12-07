@@ -15,6 +15,9 @@ import com.example.demo.util.Role;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * セキュリティ。
+ */
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
@@ -22,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
+    /**
+     * @return パスワード。
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

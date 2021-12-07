@@ -36,9 +36,25 @@
 	              
 		              <div class="mb-3">
 		              	<label for="username">職員ID</label>
-		              	<input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{username}">
+		              	<input type="text" readonly class="form-control-plaintext"  th:errorclass="is-invalid" th:field="*{username}">
 		              	<div class="invalid-feedback" th:errors="*{username}">
 		              	</div>
+		              </div>
+		              
+		              <label for="username" class="form-label">
+		                  職員名
+		                </label>
+		              <div class="input-group mb-3">
+		                <span class="input-group-text">姓</span>
+		                <input class="form-control" type="text"
+		                  th:errorclass="is-invalid" th:field="*{lastName}">
+		                <div class="invalid-feedback" th:errors="*{lastName}">
+		                </div>
+		                <span class="input-group-text">名</span>
+		                <input class="form-control" type="text"
+		                  th:errorclass="is-invalid" th:field="*{firstName}">
+		                <div class="invalid-feedback" th:errors="*{firstName}">
+		                </div>
 		              </div>
 	              
 		              <div class="mb-3">

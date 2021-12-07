@@ -5,6 +5,11 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+<style>
+.m{
+	margin-left: 30px;
+}
+</style>
 </head>
 <body>
 
@@ -28,7 +33,7 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                <label th:text="${user.username}"></label>
-                さんの勤怠情報
+                さんの勤怠情報参照
               </h6>
             </div>
             <div class="card-body">
@@ -45,14 +50,25 @@
 				                <tbody>
 					                <tr th:each="schedule : *{schedule}" th:object="${schedule}">
 								                    <td th:text="*{#calendars.format(scheduleDate, 'yyyy-MM-dd')}"></td>
-								                    <td th:text="*{scheduleName}"></td>
+								                    
+								                    <td >
+								                    <th:block th:if="${schedule.scheduleName == 'テレ'}"
+								                    th:text="*{scheduleName} + '  ' + *{#strings.replace(scheduleStart,'08:30','')}">
+								                    	
+								                    </th:block>
+								                    <th:block th:if="${schedule.scheduleName == '時休'}">
+								                    	[[*{scheduleName}]] [[*{scheduleStart}]]~ ([[*{scheduleTime}]]h)
+								                    </th:block>
+								                     <th:block th:if="${schedule.scheduleName != '時休' && schedule.scheduleName != 'テレ'}">
+								                    	[[*{scheduleName}]]
+								                    </th:block>
+								                    </td><!-- 時給の開始時間と終了時間を表示 -->
+								                    
 								                    <td>
-								                    <a th:href="@{/admin/scheduleEdit/{id}(id=*{id})}" class="btn btn-warning">
+								                    <a th:href="@{/admin/scheduleEdit/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	編集</a>
-								                    <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}" class="btn btn-danger">
-							                    	<i class="bi bi-trach-fill"></i>
-							                    	削除</a>
+								                     <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}" class="btn btn-danger btn-sm m" th:value="*{id}" onclick="return confirm('本当に削除しますか？')">削除</a>
 								                    </td>
 								    </tr>
 								    

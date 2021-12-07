@@ -7,9 +7,13 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.example.demo.validator.DateOfMonth;
+import com.example.demo.validator.ListLength;
 
 import lombok.Getter;
 import lombok.Setter;
+/**
+ * バッファ。
+ */
 @Getter
 @Setter
 @DateOfMonth(fields= {"start","end"})
@@ -18,7 +22,9 @@ public class ScheduleRegister {
 	private Date start;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date end;
-	
 	private List<UserInfo> userList;
+	@ListLength
 	private List<Long> userInfoIdList = new ArrayList<>();
+	private List<String> tereGive;
+	private List<String> tereServe;
 }

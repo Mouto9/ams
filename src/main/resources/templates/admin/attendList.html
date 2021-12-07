@@ -4,6 +4,11 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+<style>
+.m{
+	margin-left: 30px;
+}
+</style>
 </head>
 <body>
 
@@ -27,7 +32,7 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                 <label th:text="${users.username}"></label>
-                さんの出勤時刻
+                さんの出勤情報参照　　<a th:href="@{/admin/attendRegister/{id}(id=*{id})}" class="btn btn-primary">出勤情報登録</a>
               </h6>
             </div>
             <div class="card-body table-responsive">
@@ -36,7 +41,7 @@
 		              <table id="user-table" class="table table-bordered">
 		                <thead>
 		                  <tr>
-		                    <th>押下時間</th>
+		                    <th>出勤時間</th>
 		                    <th></th>
 		                  </tr>
 		                </thead>
@@ -44,14 +49,12 @@
 			                <tr th:each="attendance : *{attendance}" th:object="${attendance}" >
 						                    <td th:text="*{#calendars.format(attendanceTime, 'yyyy-MM-dd HH:mm')}"></td>
 						                    <td>
-						                    <a th:href="@{/admin/attendEdit/{id}(id=*{id})}" class="btn btn-warning">
+						                    <a th:href="@{/admin/attendEdit/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm m">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	編集
 							                </a>
-						                    <a th:href="@{/admin/attendDelete/{id}(id=*{id})}" class="btn btn-danger">
-							                    	<i class="bi bi-trach-fill"></i>
-							                    	削除
-							                </a>
+						                    <a th:href="@{/admin/attendDelete/{id}(id=*{id})}" class="btn btn-danger btn-sm m" th:value="*{id}" onclick="return confirm('本当に削除しますか？')">削除</a>
+							                
 						                    </td>
 						    </tr>
 		                </tbody>

@@ -26,7 +26,8 @@
           <div class="card shadow">
             <div class="card-header">
               <h6 class="text-navy my-2">
-                マイページ
+              <label th:text="${users.firstName}"></label>さん お疲れ様です。
+                
                 <!-- <a th:href="@{/demo}" class="btn btn-danger">
             	<i class="bi bi-trach-fill"></i>
             	デモ</a> -->
@@ -37,9 +38,9 @@
                <div id='mySchedule'></div>
                </div>
           </div>
-		   	</div>
-		  </div>
-        </div>
+		</div>
+	  </div>
+    </div>
   </main>
 </body>
 </html>

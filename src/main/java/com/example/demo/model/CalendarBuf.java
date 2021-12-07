@@ -1,16 +1,20 @@
 package com.example.demo.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.example.demo.validator.Attend;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * バッファ。
+ */
 @Getter
 @Setter
+@Attend(fields= {"attend","user"})
 public class CalendarBuf {
 	private String title;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -18,12 +22,12 @@ public class CalendarBuf {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date end;
 	
-	private List<UserInfo> userList;
-	private List<Long> userInfoIdList = new ArrayList<>();
-	private List<String> name;
+	private UserInfo user;
+
 	private String color;
 	private long id;
 	
+	private String attend;
 	
 	
 	public int hashCode(){

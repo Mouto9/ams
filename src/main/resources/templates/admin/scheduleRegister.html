@@ -14,6 +14,16 @@ function checkAllBox(trueOrFalse) {
   }
 }
 </script>
+<style>
+#info:hover{
+	color : orabge;
+}
+.test{
+	font-size:.875em;
+	color:#dc3545;
+
+}
+</style>
 </head>
 <body>
   <!-- サイドバーの表示 -->
@@ -35,7 +45,10 @@ function checkAllBox(trueOrFalse) {
           <div class="card shadow">
             <div class="card-header">
             <h6 class="text-navy">
-              勤怠登録
+              勤怠登録 
+               <a class="btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="上書きされません">
+				i
+				</a>
             </h6>
 			</div>
 			<div class = "card-body">
@@ -43,41 +56,48 @@ function checkAllBox(trueOrFalse) {
             <form th:action="@{/admin/scheduleRegister}" th:object="${calendarBuf}"method="post" novalidate>
 			<div class="mb-3">
 			<h6 >対象職員
-			<input type="button" class =" btn btn-primary" onclick="checkAllBox(true)"
+			<input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(true)"
 			  value="全選択" style="margin-bottom:0;">
-			  <input type="button" class =" btn btn-primary" onclick="checkAllBox(false)"
+			  <input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(false)"
 			  value="全解除">
 			  </h6>
+			  <!-- ここから職員のチェックボックス -->
              <div class="col-md-9 mb-3">
-			  
-			        <div class="mb-3 form-check" th:each="userList:*{userList}"><!-- 繰り返し開始 -->
-			            <label class="form-check-label" >
-			             <input class="form-check-input" type="checkbox"
-			            th:value="${userList.id}" name ="userInfoIdList"checked>
-			            [[${userList.username}]]</label>
-			        </div>																<!-- 繰り返し終了 -->
-			    </div>
+		        <div  class="mb-3 form-check-inline" th:each="userList, u:*{userList}"><!-- 繰り返し開始 -->
+		            <label  >
+		             <input class="form-check-input" type="checkbox"
+		            th:value="${userList.id}" name ="userInfoIdList"checked th:errorclass="is-invalid">
+		          
+		           [[${userList.lastName}]][[${userList.firstName}]] </label>
+		              
+		        </div><!-- 繰り返し終了 -->
+		        <br>
+		        <th:block class="invalid-feedback" ><div class = "test" th:errors="*{userInfoIdList}"></div></th:block>
+		    </div>
+		   
 			
 			
-           
-              <h6 >テンプレ－ト</h6>
+              <h6 >勤務体系</h6>
+	           <div class="col-md-9 mb-3">
               	<div class="my-3">
               		<div class="form-check">
               			<input type="radio" class="form-check-input" checked>
               			<label class="form-check-label" for="credit">官執勤務（土日休み）</label>
               		</div>
-              			<label class="bi bi-x-lg" >ABCX (実装未定)</label><br>
+              			<!-- <label class="bi bi-x-lg" >ABCX (実装未定)</label><br>
               			<label class="bi bi-x-lg">遅早（実装未定）</label><br>
-              			<label class="bi bi-x-lg">特執（実装未定）</label>
+              			<label class="bi bi-x-lg">特執（実装未定）</label> -->
               	</div>
+              </div>
               <h6>期間</h6>
+              <div class="col-md-9 mb-3">
                <div class="mb-3">
                <label for="title" class="form-label">
                <span class="badge bg-danger">必須</span>
                 開始日
                 </label>
-                  <input class="form-control" type="date"
-                  th:errorclass="is-invalid" th:field="*{start}">
+	                  <input class="form-control w-25" type="date"
+	                  th:errorclass="is-invalid" th:field="*{start}">
                 <div class="invalid-feedback" th:errors="*{start}">
                 </div>
               </div>
@@ -86,10 +106,11 @@ function checkAllBox(trueOrFalse) {
                <span class="badge bg-danger">必須</span>
                	終了日
                 </label>
-                  <input class="form-control" type="date"
+                  <input class="form-control w-25" type="date"
                   th:errorclass="is-invalid"  th:field="*{end}">
                 <div class="invalid-feedback" th:errors="*{end}">
                 </div>
+              </div>
               </div>
               
 		              <button class="btn btn-navy col-4" type="submit">

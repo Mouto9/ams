@@ -5,7 +5,18 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+ <style>
+#info:hover{
+	color : orabge;
+}
+.test{
+	font-size:.875em;
+	color:#dc3545;
+
+}
+</style>
 </head>
+
 <body>
 
   <!-- サイドバーの表示 -->
@@ -27,7 +38,7 @@
           <div class="card shadow">
             <div class="card-header">
               <h6 class="text-navy my-2">
-               編集
+               勤怠情報編集
               </h6>
             </div>
             <div class="card-body">
@@ -37,12 +48,11 @@
 	              	<input type="hidden" th:field="*{scheduleDate}">
 	               <div class="mb-3">
 		              	<label class="form-label">日付</label>
-		              	<label class="form-control-plaintext" th:text="*{#calendars.format(scheduleDate, 'yyyy-MM-dd')}">
-		              	</label>
+		              	<label class="form-control-plaintext" th:text="*{#calendars.format(scheduleDate, 'yyyy-MM-dd')}"></label>
 		              </div>
 		              <div class="mb-3">
 		              	<label class="form-label">予定</label>
-		              	<select class="form-select" id="sName" th:field="*{scheduleName}">
+		              	<select class="form-select" th:field="*{scheduleName}" id="selbox" onchange="change();">
 						    <option
 						      th:each="sName : ${sName}"
 						      th:value="${sName.value}"
@@ -50,10 +60,68 @@
 						    </option>
 						  </select>
 		              	</div>
+
+	              		<div id="jikyu" class="mb-3">
+			              	<span class="badge bg-danger">必須</span>
+			              	<label class="form-label">いつから</label>
+			              	<input class="form-control w-25" type = "time"
+			              	th:value="${jikyu.title}" th:field="${jikyu.title}">
+			              	<span class="badge bg-danger">必須</span>
+			              	<label class="form-label">時間</label>
+			              	<select class="form-select  w-25" th:field="${jikyu.color}">
+						    <option
+						      th:each="hou : ${hou}"
+						      th:value="${hou.value}"
+						      th:text="${hou.value}">
+						    </option>
+						  </select>
+			              </div>
+			              <div id="tere" class="mb-3">
+			              <span class="badge bg-danger">必須</span>
+			              	<label class="form-label">期間</label>
+
+			  <!-- ここから時限のチェックボックス -->
+             <div class="col-md-9 mb-3">
+		        <div  class="mb-3 form-check-inline" th:each="scheduleRegister:${sr.tereGive}"><!-- 繰り返し開始 -->
+		            <label  >
+		             <input class="form-check-input" type="checkbox"
+		            th:value="${scheduleRegister}" name ="tereServe" checked>
+		          
+		           [[${scheduleRegister}]] </label>
+		              
+		        </div><!-- 繰り返し終了 -->
+		    </div>
+			              </div>
+			              
+
 		              <button class="btn btn-navy col-4" type="submit">
 		              	<i class="bi bi-pencil-square"></i>
 		              	<span class="text">保存</span>
 		              </button>
+		              
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script type="text/javascript">
+window.onload = function() {
+	document.getElementById('jikyu').style.display="none";
+	document.getElementById('tere').style.display="none";
+}
+function change() {
+	  if (document.getElementById('selbox')) {
+	    selboxValue = document.getElementById("selbox").value;
+	    if (selboxValue == "時休") {
+	    	document.getElementById("tere").style.display = "none";
+	      document.getElementById("jikyu").style.display = "";
+	    }else if(selboxValue == 'テレ'){
+	    	document.getElementById('tere').style.display = "";
+	    	document.getElementById("jikyu").style.display = "none";
+	    } else{
+	    	document.getElementById("tere").style.display = "none";
+	      document.getElementById("jikyu").style.display = "none";
+	    }
+	  }
+	}
+window.onload = viewChange;
+</script>
 	             </form>
             	</div>
          	</div>
