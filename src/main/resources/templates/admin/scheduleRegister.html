@@ -15,6 +15,9 @@ function checkAllBox(trueOrFalse) {
 }
 </script>
 <style>
+#info:hover{
+	color : orabge;
+}
 .test{
 	font-size:.875em;
 	color:#dc3545;
@@ -42,7 +45,10 @@ function checkAllBox(trueOrFalse) {
           <div class="card shadow">
             <div class="card-header">
             <h6 class="text-navy">
-              勤怠登録
+              勤怠登録 
+               <a class="btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="上書きされません">
+				i
+				</a>
             </h6>
 			</div>
 			<div class = "card-body">
@@ -50,9 +56,9 @@ function checkAllBox(trueOrFalse) {
             <form th:action="@{/admin/scheduleRegister}" th:object="${calendarBuf}"method="post" novalidate>
 			<div class="mb-3">
 			<h6 >対象職員
-			<input type="button" class =" btn btn-primary" onclick="checkAllBox(true)"
+			<input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(true)"
 			  value="全選択" style="margin-bottom:0;">
-			  <input type="button" class =" btn btn-primary" onclick="checkAllBox(false)"
+			  <input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(false)"
 			  value="全解除">
 			  </h6>
 			  <!-- ここから職員のチェックボックス -->
@@ -62,7 +68,7 @@ function checkAllBox(trueOrFalse) {
 		             <input class="form-check-input" type="checkbox"
 		            th:value="${userList.id}" name ="userInfoIdList"checked th:errorclass="is-invalid">
 		          
-		           [[${userList.username}]] </label>
+		           [[${userList.lastName}]][[${userList.firstName}]] </label>
 		              
 		        </div><!-- 繰り返し終了 -->
 		        <br>

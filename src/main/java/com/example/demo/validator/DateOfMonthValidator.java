@@ -9,6 +9,9 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+/**
+ * 勤怠情報登録時のバリデータ。
+ */
 public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Object> {
 
 	// バリデーション対象の変数の値を入れる
@@ -17,7 +20,7 @@ public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Ob
 	  private String message;
 
 	  /**
-	   * 初期化処理 
+	   * 初期化処理。
 	   * ()内のクラスは下記2のアノテーションクラス
 	   */
 	  public void initialize(DateOfMonth annotation) {
@@ -25,12 +28,15 @@ public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Ob
 	    this.message = annotation.message();
 	   }
 
+    /**
+     * バリデーション。
+     */
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {//ここからstartとendのいいわるいの判別を行う
     	BeanWrapper beanWrapper = new BeanWrapperImpl(value);
     	Date s = (Date)beanWrapper.getPropertyValue(fields[0]);
     	Date e = (Date)beanWrapper.getPropertyValue(fields[1]);
-			
+		Date today = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(s);
 		int s2 = c.get(Calendar.MONTH);
@@ -40,18 +46,25 @@ public class DateOfMonthValidator implements ConstraintValidator<DateOfMonth, Ob
 		int e2 = c.get(Calendar.MONTH);
 		int e1 = c.get(Calendar.DAY_OF_MONTH);
 		int ey = c.get(Calendar.YEAR);
+		c.setTime(today);
+		int yOfToday = c.get(Calendar.YEAR);
 		
-		if(!(sy >= 2000 && sy <= 3000) || !(ey >= 2000 && ey <= 3000))  {
+		if(!(sy >= yOfToday - 1 && sy <= yOfToday + 1) || !(ey >= yOfToday - 1 && ey <= yOfToday + 1))  {
 			context.disableDefaultConstraintViolation();
-		    context.buildConstraintViolationWithTemplate("想定以上又は以下の西暦が入力されています").addPropertyNode(fields[0])
+		    context.buildConstraintViolationWithTemplate(yOfToday - 1 + " ~ "  + (yOfToday + 1) + "で入力してください").addPropertyNode(fields[0])
 		        .addConstraintViolation();
-		    context.buildConstraintViolationWithTemplate("想定以上又は以下の西暦が入力されています").addPropertyNode(fields[1])
+		    context.buildConstraintViolationWithTemplate(yOfToday - 1 + " ~ "  + (yOfToday + 1) + "で入力してください").addPropertyNode(fields[1])
 	        .addConstraintViolation();
 			
 			return false;
-		}
-		
-		if(e2 != s2) {
+		}else if(sy != ey) {
+			context.disableDefaultConstraintViolation();
+		    context.buildConstraintViolationWithTemplate("開始日と終了日の年が異なります").addPropertyNode(fields[0])
+		        .addConstraintViolation();
+		    context.buildConstraintViolationWithTemplate("開始日と終了日の年が異なります").addPropertyNode(fields[1])
+	        .addConstraintViolation();
+			return false;
+		}else if(e2 != s2) {
 			context.disableDefaultConstraintViolation();
 		    context.buildConstraintViolationWithTemplate(message).addPropertyNode(fields[0])
 		        .addConstraintViolation();

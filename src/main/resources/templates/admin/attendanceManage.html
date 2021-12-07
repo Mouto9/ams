@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}">
+<head>
+  <meta charset="UTF-8" th:remove="tag">
+  <style>
+.m{
+	margin-left: 10px;
+}
+</style>
+  <script>
+const checkbox3 = document.getElementsByName("userInfoIdList")
+
+function checkAllBox(trueOrFalse) {
+  for(i = 0; i < checkbox3.length; i++) {
+    checkbox3[i].checked = trueOrFalse
+  }
+}
+</script>
+</head>
+<body>
+
+
+  <!-- サイドバーの表示 -->
+  <div layout:fragment="sidebar"
+    th:replace="~{fragments/sidebar :: sidebar}">
+  </div>
+
+  <!-- コンテンツの表示 -->
+  <main layout:fragment="content" class="offcanvas-outside bg-light">
+    <div class="container-fluid">
+      <!-- トグルボタン -->
+      <div th:replace="~{fragments/sidebar :: toggler}">
+      </div>
+      <div class="row">
+        <div class="col">
+
+          <div class="card shadow">
+            <div class="card-header">
+              <h6 class="text-navy my-2">
+                勤怠管理
+              </h6>
+            </div>
+            <div class="card-body table-responsive">
+              <table id="user-table" class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>職員ID</th>
+                    <th>職員名</th>
+                    <th></th>
+                   
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="user : ${users}" th:object="${user}">
+                    <td th:text="*{username}">
+                    </td>
+                    <td> [[*{lastName}]] [[*{firstName}]]
+                    </td>
+                    <td>
+                 
+
+                    	<a th:href="@{/admin/scheduleList/{id}(id=${user.id})}" class="btn btn-outline-success btn-sm">
+                    	<i class="bi bi-trach-fill"></i>
+						勤怠情報参照</a>
+
+                    	<a th:href="@{/admin/attendList/{id}(id=${user.id})}" class="btn btn-outline-secondary btn-sm m">
+                    	<i class="bi bi-trach-fill"></i>
+						出勤情報参照</a>
+
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+                    <div class="card shadow">
+            <div class="card-header">
+            <h6 class="text-navy">
+              勤怠情報削除
+            </h6>
+			</div>
+			<div class = "card-body">
+			
+            <form th:action="@{/admin/attendanceManage}" th:object="${calendarBuf}"method="post" novalidate>
+			<div class="mb-3">
+			<h6 >対象職員
+			<input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(true)"
+			  value="全選択" style="margin-bottom:0;">
+			  <input type="button" class =" btn btn-primary btn-sm" onclick="checkAllBox(false)"
+			  value="全解除">
+			  </h6>
+			  <!-- ここから職員のチェックボックス -->
+             <div class="col-md-9 mb-3">
+		        <div  class="mb-3 form-check-inline" th:each="userList, u:*{userList}"><!-- 繰り返し開始 -->
+		            <label  >
+		             <input class="form-check-input" type="checkbox"
+		            th:value="${userList.id}" name ="userInfoIdList" th:errorclass="is-invalid">
+		          
+		           [[${userList.username}]] </label>
+		              
+		        </div><!-- 繰り返し終了 -->
+		        <br>
+		        <th:block class="invalid-feedback" ><div class = "test" th:errors="*{userInfoIdList}"></div></th:block>
+		    </div>
+		   
+              <h6>期間</h6>
+              <div class="col-md-9 mb-3">
+               <div class="mb-3">
+               <label for="title" class="form-label">
+               <span class="badge bg-danger">必須</span>
+                開始日
+                </label>
+	                  <input class="form-control w-25" type="date"
+	                  th:errorclass="is-invalid" th:field="*{start}">
+                <div class="invalid-feedback" th:errors="*{start}">
+                </div>
+              </div>
+               <div class="mb-3">
+               <label for="title" class="form-label">
+               <span class="badge bg-danger">必須</span>
+               	終了日
+                </label>
+                  <input class="form-control w-25" type="date"
+                  th:errorclass="is-invalid"  th:field="*{end}">
+                <div class="invalid-feedback" th:errors="*{end}">
+                </div>
+              </div>
+              </div>
+              
+		              <button class="btn btn-danger col-4" type="submit" onclick="return confirm('本当に削除しますか？')">
+		              	<span class="text">削除</span>
+		              </button>
+		              </div>
+	             </form>
+            	</div>
+            	
+         	</div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </main>
+</body>
+</html>

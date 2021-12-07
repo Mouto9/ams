@@ -5,13 +5,19 @@
 .fc-day-sun {
     background-color: #ffeaea;
 }
+
 .bg-image {/* 背景の色 */
+  background:
+    url('/img/6.gif');
+  background-size: cover;
+}
+.sb-image {/* 背景の色 */
   background:
     linear-gradient(to bottom,
       rgba(195, 72, 17, 0.7),
       rgba(195, 161, 17, 0.6)
     ),
-    url('/img/1.png');
+    url('/img/aaa.gif');
   background-size: cover;
 }
 

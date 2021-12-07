@@ -19,9 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				mouseEnterInfo.element = title;
 				
 			},
-			eventSources:{
+			eventSources:[{
 				url:'/myScheduleURL'
-			}
+			},{
+				url:'/holiday',
+				display:'background'
+			}]
 
         });
         calendar.render();

@@ -15,9 +15,17 @@ document.addEventListener('DOMContentLoaded', function() {
 					id: 0
 				},{
 					url:'/number',
-					id: 1
+					id: '1',
+				},{
+					url:'/notAttend',
+					className: 'holiday'
+				},{
+					url:'/holiday',
+					display:'background',
 				}
 			],
+
+
 			dateClick: function(info) {
 				var date2 = info.dateStr;
 								

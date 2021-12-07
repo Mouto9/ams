@@ -1,17 +1,7 @@
 package com.example.demo.controller;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import org.jxls.common.Context;
-import org.jxls.util.JxlsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,85 +14,78 @@ import com.example.demo.repository.UserInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 全職員用コントローラ。
+ *
+ */
 @RequiredArgsConstructor
 @Controller
 public class AMSController {
-	private final AttendanceRepository attendRepository;
+	private final AttendanceRepository attendanceRepository;
 	private final UserInfoRepository userRepository;
-    
+    /**
+     * ログイン。
+     * @param loginuser ログインユーザー。
+     * @return "login"
+     */
     @GetMapping("/login")//ログイン
     public String login(Authentication loginuser) {
         return "login";
     }
 
-    @GetMapping("/")		//ホーム画面
-    public String showList(Authentication loginuser,Model model){
-    	try {
-	    	UserInfo userInfo = userRepository.findByUsername(loginuser.getName());
-	    	List<Attendance> attendedInfo = attendRepository.findByUserInfo(userInfo);
-	    	Date today = new Date();
-	    	
-	    	Calendar calendarAttended = Calendar.getInstance();
-	    	calendarAttended.setTime(attendedInfo.get(attendedInfo.size() - 1).getAttendanceTime());//最新の出勤処理した時刻
-	    	Calendar calendarToday = Calendar.getInstance();
-	    	calendarToday.setTime(today);
-	    	
-	    	if(calendarAttended.get(Calendar.DAY_OF_YEAR) == calendarToday.get(Calendar.DAY_OF_YEAR)) {
-	    		model.addAttribute("users",userRepository.findByUsername(loginuser.getName()));
-	    		return "mypage";
-	    	}else {
-	    		return "attend";
-	    	}
-    	}catch(Exception e) {
-    		return "attend";
-    	}
-    	
+    /**
+     * 当日に出勤時刻があれば「マイページ画面」へ、無ければ「出勤処理画面」へ遷移する。
+     * @param loginuser ログインユーザー。
+     * @param model モデル。
+     * @param attendance 出勤情報。
+     * @param userInfo 職員情報。
+     *  @return "mypage" or "attend"
+     */
+    @GetMapping("/")
+    public String mypageORattend(Authentication loginuser,Model model,Attendance attendance,UserInfo userInfo){
+        	Calendar todayStart = Calendar.getInstance();
+        	Calendar todayEnd = Calendar.getInstance();
+        	todayStart.set(Calendar.HOUR_OF_DAY,0);
+        	todayEnd.set(Calendar.HOUR_OF_DAY, 24);
+        	if(attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(todayStart.getTime(),todayEnd.getTime() , userRepository.findByUsername(loginuser.getName()))) {
+        		return mypage(loginuser,model);
+        	}else {
+        		return "attend";
+        	}
     }
     
-    @GetMapping("/attend")//出勤処理画面
-    public String attend(Authentication loginuser,Attendance attendedInfo,UserInfo userInfo,Model model) {
+    /**
+     * 出勤処理を行う。
+     * @param loginuser ログインユーザー。
+     * @param attendance 出勤情報。
+     * @return "mypage"
+     */
+    @GetMapping("/attend")
+    public String attend(Authentication loginuser,Attendance attendance) {
     	Date date = new Date();
-    	attendedInfo.setAttendanceTime(date);    	 
-    	
-    	userInfo = userRepository.findByUsername(loginuser.getName());
-    	attendedInfo.setUserInfo(userInfo);
-    	
-        attendRepository.save(attendedInfo);
+    	attendance.setAttendanceTime(date);    	 
+    	attendance.setUserInfo(userRepository.findByUsername(loginuser.getName()));
+        attendanceRepository.save(attendance);
        return "redirect:/mypage";
     }
-    @GetMapping("/mypage")//自分の当日の出勤時刻、勤怠予定一覧
+    /**
+     * マイページ画面。
+     * @param loginuser ログインユーザー。
+     * @param model モデル。
+     * @return "mypage"
+     */
+    @GetMapping("/mypage")//名前
     public String mypage(Authentication loginuser,Model model) {
     	model.addAttribute("users",userRepository.findByUsername(loginuser.getName()));
     	return "mypage";
     }
 
-    @GetMapping("/allSchedule")//全職員の全予定がわかるカレンダー
+    /**
+     * 全職員の全勤怠情報がわかるカレンダー
+     * @return "allSchedule"
+     */
+    @GetMapping("/allSchedule")
     public String allSchedule() {
         return "allSchedule";
     }
-    //個々からテスト
-    @GetMapping("/test")		//ホーム画面
-    public String test(){
-    		return "test";
-    }
-    /**
-     * Object collection output demo
-     * @author Leonid Vysochyn
-     */
-        private static Logger logger = LoggerFactory.getLogger(AMSController.class);
-
-        @GetMapping("/demo")
-        public String demo(String[] args) throws ParseException, IOException {
-            logger.info("Running Object Collection demo");
-            List<Attendance> attend = attendRepository.findAll();
-            try(InputStream is = AMSController.class.getResourceAsStream("object_collection_template.xls")) {
-                try (OutputStream os = new FileOutputStream("target/object_collection_output.xls")) {
-                    Context context = new Context();
-                    context.putVar("attend", attend);
-                    JxlsHelper.getInstance().processTemplate(is, os, context);
-                }
-            }
-            return "redirect:/mypage";
-            
-        }
 }

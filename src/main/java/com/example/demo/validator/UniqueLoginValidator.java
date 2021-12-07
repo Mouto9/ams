@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.repository.UserInfoRepository;
 
+/**
+ * 職員情報管理時のバリデータ。
+ */
 public class UniqueLoginValidator implements ConstraintValidator<UniqueLogin, Object> {
 	
 	// バリデーション対象の変数の値を入れる
@@ -24,20 +27,28 @@ public class UniqueLoginValidator implements ConstraintValidator<UniqueLogin, Ob
 		    this.message = annotation.message();
 		   }
 	  
+    /**
+     * 初期化。
+     */
     public UniqueLoginValidator() {
         this.userRepository = null;
     }
 
+    /**
+     * @param userRepository 職員情報リポジトリ。
+     */
     @Autowired
     public UniqueLoginValidator(UserInfoRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /**
+     * バリデーション。
+     */
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
     	BeanWrapper beanWrapper = new BeanWrapperImpl(value);
     	String userId = beanWrapper.getPropertyValue(fields[1]).toString();
-    	System.out.println(userId);
     	if(userRepository == null) {
     		return true;
     	}

@@ -4,11 +4,17 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.example.demo.validator.Attend;
+
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * バッファ。
+ */
 @Getter
 @Setter
+@Attend(fields= {"attend","user"})
 public class CalendarBuf {
 	private String title;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -21,6 +27,7 @@ public class CalendarBuf {
 	private String color;
 	private long id;
 	
+	private String attend;
 	
 	
 	public int hashCode(){

@@ -4,6 +4,11 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+  <style>
+#info:hover{
+	color : orabge;
+}
+</style>
 </head>
 <body>
 
@@ -27,6 +32,9 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                 カレンダー
+              <a class="btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="祝日の反映は前後1年です。">
+				i
+				</a>
               </h6>
             </div>
              <!-- カレンダーの表示 -->

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" th:remove="tag">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
+	<link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/app.css}" rel="stylesheet">
+	<link th:href="@{/css/attendancedook.css}" rel="stylesheet">
+	
+	<title>帳票出力</title>
+	
+
+</head>
+<body>
+	<!-- サイドバーの配置 -->
+	<div th:replace="~{fragments/sidebar :: sidebar}">
+	</div>
+	
+	<!-- コンテンツの配置 -->
+	<main class="offcanvas-outside bg-light">
+		<div class="container-fluid">
+		
+			<!-- トグルボタン -->
+			<div th:replace="~{fragments/sidebar :: toggler}">
+			</div>
+			
+			<div class="row">
+				<div class="col">
+					 <div class="card shadow">
+					 
+					 	<div th:fragment="main-content">
+							<div id="attendancebook">
+							
+	            				<div class="card-header">
+	              					<h6 class="text-navy my-2">
+	                					出勤簿出力画面
+	              					</h6>
+									<select id="selecteduser" style="font-size: 20px; font-weight:  bold; background-color: yellow;" onchange="http_get_ajax()">
+										<option th:each="user :  ${userlist}"
+												th:value="${user.id}"
+												th:selected="(${user==selecteduser})">
+											[[${user.lastName}]]<!-- -->　<!-- -->[[${user.firstName}]]
+										</option>
+									</select>
+									<select id="selectedyear" style="font-size: 20px; font-weight:  bold; background-color: yellow;" onchange="http_get_ajax()">
+										<option th:each="selectyears :  ${selectyearlist}"
+												th:value="${selectyears}"
+												th:selected="(${selectyears==selectedyear})">
+											[[${selectyears}]]
+										</option>
+									</select>
+									<label>
+										<input type="radio" name="selectedperiod" th:checked="(${selectedperiod}=='前期')" value="前期" onchange="http_get_ajax()">
+										前期
+									</label>
+									<label>
+										<input type="radio" name="selectedperiod" th:checked="(${selectedperiod}=='後期')" value="後期" onchange="http_get_ajax()">
+										後期
+									</label>
+
+									<button type="button" class="btn btn-secondary ms-5" onclick="attendancePrint()">
+										<i class ="bi bi-printer me-2"></i >印刷
+									</button>
+	            				</div>
+
+           				
+								<div class="card-body align-items-center justify-content-center"><!--ここから出勤簿表示かつ印刷範囲-->
+									
+									<div id="__next" class="print-area">
+										<div class="translate-y-1 paper">
+											<div>
+												<div class="float-left w-1/12 h-10">
+													<p class="leading-10 text-tiny ">別記様式第１９号</p>
+												</div>
+												<div class="float-left w-1/12 h-10 text-center">
+													<div class="h-1/2">
+													</div>
+													<p class="translate-x-10 lending-1/2">[[${selectedyear}]]<!-- -->　年</p>
+												</div>
+												<div class="float-left w-7/12 h-10 text-center">
+													<div class="w-2/3 mx-auto text-center">
+														<p class="text-4xl leading-10 tracking-widest -translate-x-20">出勤簿</p>
+													</div>
+												</div>
+												<div class="float-left w-1/12 h-10 text-center name-space">
+													<p class="leading-10">氏　名</p>
+												</div>
+												<div class="float-left w-2/12 h-10 text-center name-space2">
+													<h1 class="leading-10">[[${selecteduser.lastName}]]<!-- -->　<!-- -->[[${selecteduser.firstName}]]</h1>
+												</div>
+											</div>
+											<div class="w-full h-full ">
+												<div class="flex w-full border-t border-l border-black h-headerArea">
+													<div class="h-full border-b border-r border-black w-left slash-div3">
+														<div class="text-xs text-right h-1/2">日
+														</div>
+														<div class="text-xs h-1/2">月
+														</div>
+													</div>
+													<div class="h-full border-b border-r border-black w-center">
+														<div class="w-full text-xs text-center border-b border-black h-1/3">
+															<p class="-translate-y-0.5">出　　　　　　　　　　　　　　　　 　　　　　　　欠</p>
+														</div>
+										
+														<div class="flex h-full w-center">
+															<div th:each="day : ${#numbers.sequence(1, 15)}">
+																<div class="text-center border-r border-black h-2/3 w-1/16">
+																	<div class="border-b border-black h-1/2">
+																		<p class="text-xs -translate-y-0.5">[[${day}]]</p>
+																	</div>
+																	<p class="text-xs h-1/2">[[${day + 15}]]</p>
+																</div>
+															</div>
+										
+															<div class="text-center border-r border-black h-2/3 w-1/16">
+																<div class="border-b border-black h-1/2">
+																</div>
+																<p class="text-xs h-1/2">31</p>
+															</div>
+														</div>
+													</div>
+													<div class="h-full border-b border-black w-right">
+														<div class="text-xs text-center border-b border-r border-black h-1/3">
+															<p class="-translate-y-0.5">集　　　　　　　　　計</p>
+														</div>
+														<div class="flex border-r border-black h-2/3">
+															<div class="w-1/3 border-r border-black">
+																<div class="text-center border-b border-black h-1/3">
+																	<p class="text-xs scale-50 -translate-y-1">年次休暇</p>
+																</div>
+																<div class="flex h-2/3">
+																	<div class="w-1/2 h-full text-center border-r border-black">
+																		<div class="w-full h-1/2 ">
+																			<p class="text-sm scale-50 -translate-y-1">使　用</p>
+																		</div>
+																		<div class="w-full h-1/2 ">
+																			<p class="text-sm scale-50 -translate-y-1 ">日/時/分</p>
+																		</div>
+																	</div>
+																	<div class="w-1/2 h-full text-center">
+																		<div class="w-full h-1/2">
+																			<p class="text-sm scale-50 -translate-y-1">残</p>
+																		</div>
+																		<div class="w-full h-1/2">
+																			<p class="text-sm scale-50 -translate-y-1 ">日/時/分</p>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="flex w-112.84px border-r border-black">
+																<div class="w-56.91px text-center border-r border-black">
+																	<p class="text-sm scale-50 -translate-y-1 ">病気</p>
+																	<p class="text-sm scale-50 -translate-y-4">休暇</p>
+																	<p class="text-sm scale-50 -translate-y-7 ">日/時/分</p>
+																</div>
+																<div class="w-1/2 text-center">
+																	<p class="text-sm scale-50 -translate-y-1 ">特別</p>
+																	<p class="text-sm scale-50 -translate-y-4">休暇</p>
+																	<p class="text-sm scale-50 -translate-y-7 ">日/時/分</p>
+																</div>
+															</div>
+															<div class="flex w-1/3">
+																<div class=" w-67.666667% border-r border-black">
+																	<div class="text-center border-b border-black h-1/3">
+																		<p class="text-xs scale-50 -translate-y-1">短従許可期間</p>
+																	</div>
+																	<div class="flex h-2/3">
+																		<div class="w-37.66px text-center border-r border-black">
+																			<p class="text-sm scale-50 -translate-y-1">使 用</p>
+																			<p class="text-sm scale-50 -translate-y-4">日/時</p>
+																		</div>
+																		<div class="w-1/2 text-center">
+																			<p class="text-sm scale-50 -translate-y-1">残</p>
+																			<p class="text-sm scale-50 -translate-y-4">日/時</p>
+																		</div>
+																	</div>
+																</div>
+																<div class="w-37.66px text-center ">
+																	<div class="h-1/2">
+																		<p class="text-sm scale-50 -translate-y-1">欠勤</p>
+																	</div>
+																	<div class="h-1/2">
+																		<p class="text-sm scale-50 -translate-y-1">時/分</p>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+									
+									
+												<div class="flex w-full border-l border-r border-black h-oneMonth" th:each="month : ${#numbers.sequence(scopeofmonth[0], scopeofmonth[1])}">
+													<div class="flex items-center h-full border-b border-r border-black w-left">
+														<p class="translate-x-1 ">[[${month}]]</p>
+													</div>
+													<div class="flex h-full w-center">
+														<div th:each="day : ${#numbers.sequence(1, 15)}">
+															<div class="box-border h-full border-r border-black w-1/16">
+																<div class="w-full border-b border-black h-1/2">
+																	<div class="text-center border-b border-black h-10/14">
+																		<div class="flex items-center justify-center w-4/5 h-full mx-auto" 
+																				th:classappend="${('時休').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd'))) ? '' :
+																												('テレ').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd'))) ? '' :
+																												#lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd')) ? 'border-2 border-red-500 rounded-full' : ''}">
+																			<p class="font-bold tracking-tighter" style="font-size:10px" 
+																					th:classappend="${('土曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd'))) ? '' :
+																													('日曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd'))) ? '' : 'text-red-500'}"
+																					th:text="${ #lists.contains(scheduleMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+day  , 'yyyyMMdd'))  ? scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd')) :
+																									#lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd')) ? selecteduser.lastName : ''}">
+																			</p>
+																		</div>
+																		<p class="flex items-center justify-center text-red-500" style="font-size:10px">
+																			[[${ #lists.contains(scheduleTimeMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+day , 'yyyyMMdd')) ? scheduleTimeMap.get(#dates.format(selectedyear+'/'+month+'/'+day, 'yyyyMMdd')): ''}]]
+																		</p>
+																	</div>
+																	<div class="h-4/14">
+																	</div>
+																</div>
+																<div class="w-full border-b border-black h-1/2">
+																	<div class="border-b border-black h-10/14" th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(day+15), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? 'slash-div' : ''}">
+																		<div class="flex items-center justify-center w-4/5 h-full mx-auto" 
+																				th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(day+15), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? '' :
+																												('時休').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd'))) ? '' :
+																												('テレ').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd'))) ? '' :
+																												#lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd')) ? 'border-2 border-red-500 rounded-full' : ''}">
+																			<p class="font-bold tracking-tighter" style="font-size:10px" 
+																					th:classappend="${('土曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd'))) ? '' :
+																												('日曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd'))) ? '' : 'text-red-500'}"
+																					th:text="${!#dates.format(selectedyear+'/'+month+'/'+(day+15), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? '' : 
+																								 #lists.contains(scheduleMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+(day+15)  , 'yyyyMMdd'))  ? scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15) , 'yyyyMMdd')):
+																								 #lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+(day+15) , 'yyyyMMdd')) ? selecteduser.lastName : ''}">
+																			</p>																			
+																		</div>
+																		<p class="flex items-center justify-center text-red-500" style="font-size:10px">
+																			[[${ #lists.contains(scheduleTimeMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+(day+15)  , 'yyyyMMdd')) ? scheduleTimeMap.get(#dates.format(selectedyear+'/'+month+'/'+(day+15), 'yyyyMMdd')): ''}]]
+																		</p>
+																	</div>
+																	<div class="h-4/14" th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(day+15), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? 'slash-div2' : ''}" >
+																	</div>
+																</div>
+															</div>
+														</div>
+												
+														<div class="h-full border-r border-black w-1/16">
+															<div class="w-full border-b border-black h-1/2">
+																<div class="border-b border-black h-10/14 slash-div">
+																</div>
+																<div class="slash-div2 h-4/14">
+																</div>
+															</div>
+															<div class="w-full border-b border-black h-1/2">
+																<div class="border-b border-black h-10/14" th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(31), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? 'slash-div' : ''}">
+																	<div class="flex items-center justify-center w-4/5 h-full mx-auto" 
+																			th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(31), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? '' :
+																											('時休').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(31) ,'yyyyMMdd'))) ? '' :
+																											('テレ').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(31) ,'yyyyMMdd'))) ? '' :
+																											#lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+(31), 'yyyyMMdd')) ? 'border-2 border-red-500 rounded-full' : ''}">
+																		<p class="font-bold tracking-tighteｒ" style="font-size:10px" 
+																				th:classappend="${('土曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(31), 'yyyyMMdd'))) ? '' :
+																												('日曜').equals(scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(31), 'yyyyMMdd'))) ? '' : 'text-red-500'}"
+																				th:text="${!#dates.format(selectedyear+'/'+month+'/'+(31), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? '' :
+																							#lists.contains(attendanceSet, #dates.format(selectedyear+'/'+month+'/'+(31) , 'yyyyMMdd')) ? selecteduser.lastName : 
+																							#lists.contains(scheduleMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+(31)  , 'yyyyMMdd'))  ? scheduleMap.get(#dates.format(selectedyear+'/'+month+'/'+(31), 'yyyyMMdd')) : ''}">
+																		</p>
+																	</div>
+																	<p class="flex items-center justify-center text-red-500" style="font-size:10px">
+																				[[${ #lists.contains(scheduleTimeMap.keySet(), #dates.format(selectedyear+'/'+month+'/'+(31)  , 'yyyyMMdd')) ? scheduleTimeMap.get(#dates.format(selectedyear+'/'+month+'/'+(31), 'yyyyMMdd')): ''}]]
+																	</p>
+																</div>
+																<div class="h-4/14"  th:classappend="${!#dates.format(selectedyear+'/'+month+'/'+(31), 'MM').equals(#dates.format(selectedyear+'/'+month+'/'+(1) , 'MM')) ? 'slash-div2' : ''}" >
+																</div>
+															</div>
+														</div>
+											
+													</div>
+													<div class="flex h-full w-right">
+														<div class="flex w-1/3 h-full border-b border-r border-black">
+															<div class="w-1/2 h-full text-center border-r border-black">
+																<p class="text-3xl font-thin translate-y-8">/ /</p>
+															</div>
+															<div class="w-1/2 h-full text-center">
+																<p class="text-3xl font-thin translate-y-8">/ /</p>
+															</div>
+														</div>
+														<div class="flex w-1/3 h-full border-b border-r border-black">
+															<div class="w-1/2 h-full text-center border-r border-black">
+																<p class="text-3xl font-thin translate-y-8">/ /</p>
+															</div>
+															<div class="w-1/2 h-full text-center">
+																<p class="text-3xl font-thin translate-y-8">/ /</p>
+															</div>
+														</div>
+														<div class="flex w-1/3 h-full border-b border-black">
+															<div class="flex w-2/3 h-full border-r border-black">
+																<div class="w-37.66px h-full border-r border-black text-center">
+																	<p class="text-3xl font-thin translate-y-8">/</p>
+																</div>
+																<div class=" w-37.66px h-full text-center">
+																	<p class="text-3xl font-thin translate-y-8">/</p>
+																</div>
+															</div>
+															<div class="w-37.66px h-full text-center">
+																<p class="text-3xl font-thin translate-y-8">/</p>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="flex text-center border-b border-l border-r border-black h-footterArea">
+													<div class=" w-left+1/16 h-full border-black border-r">
+														<div class="w-full text-sm h-1/2">
+															<p>年次休暇</p>
+														</div>
+														<div class="w-full text-sm h-1/2">
+															<p>附与日数</p>
+														</div>
+													</div>
+													<div class="h-full border-r border-black w-2/16">
+														<div class="w-full text-sm text-center border-b border-black h-1/2">
+															<p class=" tracking-moreWider">繰越分</p>
+														</div>
+														<div class="w-full text-sm text-center h-1/2">
+															<p class="tracking-moreWider">本年分</p>
+														</div>
+													</div>
+													<div class="h-full border-r border-black w-2/16">
+														<div class="w-full text-sm text-center border-b border-black h-1/2">
+															<p class="float-right tracking-moreWider">日</p>
+														</div>
+														<div class="w-full text-sm text-center h-1/2">
+															<p class="float-right tracking-moreWider">日</p>
+														</div>
+													</div>
+													<div class="h-full border-r border-black w-2/16">
+														<p class="translate-y-3">備　　考</p>
+													</div>
+													<div class="h-full border-r border-black w-8/16">
+													</div>
+													<div class="h-full border-r border-black w-1/16">
+														<p class="translate-y-3">合 計</p>
+													</div>
+													<div class="box-content border-r border-black w-55px">
+														<p class="text-3xl font-thin translate-y-1">/ /</p>
+													</div>
+													<div class="box-content border-r border-black w-56.3px">
+														<p class="text-3xl font-thin translate-y-1">/ /</p>
+													</div>
+													<div class="box-content h-full border-r border-black w-55px">
+														<p class="text-3xl font-thin translate-y-1">/ /</p>
+													</div>
+													<div class="box-content h-full border-r border-black w-56px">
+														<p class="text-3xl font-thin translate-y-1">/ /</p>
+													</div>
+													<div class="box-content h-full border-r border-black w-36.1px">
+														<p class="text-3xl font-thin translate-y-1">/</p>
+													</div>
+													<div class="box-content h-full border-r border-black w-36.7px">
+														<p class="text-3xl font-thin translate-y-1">/</p>
+													</div>
+													<div class="box-content h-full w-36.6px text-center">
+														<p class="text-3xl font-thin translate-y-1">/</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div><!--ここまで出勤簿表示かつ印刷範囲-->
+								
+							</div><!-- id=attendancebook ajax通信の目印-->
+						</div><!--フラグメント main-content-->
+						
+					 </div><!-- <div class="card shadow"> -->
+				</div><!-- <div class="col"> -->
+			</div><!-- <div class="row"> -->
+		</div><!-- <div class="container-fluid"> -->
+	</main>
+</body>
+
+	<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+	<script type="text/javascript">
+		function http_get_ajax() {
+		    var selecteduser = document.getElementById("selecteduser");
+		    var selectedyear = document.getElementById("selectedyear");
+			 var selectedperiod;
+			 document.getElementsByName("selectedperiod").forEach(p => {if(p.checked)selectedperiod = p.value;});
+		    var url = "/admin/attendancebook/" + selecteduser.value + "/" + selectedyear.value + "/" + selectedperiod;
+		    var targetElement = document.getElementById("attendancebook");
+			console.log(url);
+		    
+		    $.ajax({
+				method: 'GET',
+				data: {},
+				url: url
+				
+		    }).then(
+				function(data) {
+					targetElement.outerHTML = data;
+				},
+				function() {
+					alert("勤怠予定がありません");
+				});
+		};
+		
+		function attendancePrint(){
+	        var printArea = document.getElementsByClassName("print-area");
+
+			//プリント用の要素「#print」を作成し、上で取得したprintAreaをその子要素に入れる。
+			$('body').append('<div id="print" class="printBc"></div>');
+			$(printArea).clone().appendTo('#print');
+			$('body > :not(#print)').addClass('print-off');
+			window.print();
+			document.getElementById('print').remove();
+			$('[class*="print-off"]').removeClass("print-off");
+	     };
+	</script>
+</html>

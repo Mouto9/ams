@@ -5,6 +5,11 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+<style>
+.m{
+	margin-left: 30px;
+}
+</style>
 </head>
 <body>
 
@@ -45,32 +50,25 @@
 				                <tbody>
 					                <tr th:each="schedule : *{schedule}" th:object="${schedule}">
 								                    <td th:text="*{#calendars.format(scheduleDate, 'yyyy-MM-dd')}"></td>
-								                    <td th:text="*{scheduleName}"></td>
+								                    
+								                    <td >
+								                    <th:block th:if="${schedule.scheduleName == 'テレ'}"
+								                    th:text="*{scheduleName} + '  ' + *{#strings.replace(scheduleStart,'08:30','')}">
+								                    	
+								                    </th:block>
+								                    <th:block th:if="${schedule.scheduleName == '時休'}">
+								                    	[[*{scheduleName}]] [[*{scheduleStart}]]~ ([[*{scheduleTime}]]h)
+								                    </th:block>
+								                     <th:block th:if="${schedule.scheduleName != '時休' && schedule.scheduleName != 'テレ'}">
+								                    	[[*{scheduleName}]]
+								                    </th:block>
+								                    </td><!-- 時給の開始時間と終了時間を表示 -->
+								                    
 								                    <td>
-								                    <a th:href="@{/admin/scheduleEdit/{id}(id=*{id})}" class="btn btn-warning">
+								                    <a th:href="@{/admin/scheduleEdit/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm">
 							                    	<i class="bi bi-trach-fill"></i>
 							                    	編集</a>
-								                    <a class="btn btn-danger"
-								                    data-bs-toggle="modal" data-bs-target="#exampleModal">
-							                    	<i class="bi bi-trach-fill"></i>
-							                    	削除</a>
-								                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-													  <div class="modal-dialog">
-													    <div class="modal-content">
-													      <div class="modal-header">
-													        <h5 class="modal-title" id="exampleModalLabel">確認</h5>
-													        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-													      </div>
-													      <div class="modal-body">
-													        本当に削除しますか？
-													      </div>
-													      <div class="modal-footer">
-													        <a class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</a>
-													        <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}"class="btn btn-danger">削除</a>
-													      </div>
-													    </div>
-													  </div>
-													</div>
+								                     <a th:href="@{/admin/scheduleDelete/{id}(id=*{id})}" class="btn btn-danger btn-sm m" th:value="*{id}" onclick="return confirm('本当に削除しますか？')">削除</a>
 								                    </td>
 								    </tr>
 								    

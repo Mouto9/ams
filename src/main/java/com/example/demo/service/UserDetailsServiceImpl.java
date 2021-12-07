@@ -16,6 +16,9 @@ import com.example.demo.repository.UserInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * ログインユーザー。
+ */
 @RequiredArgsConstructor
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -33,6 +36,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return createUserDetails(user);
     }
 
+    /**
+     * @param user 職員情報
+     * @return ログインユーザー。
+     */
     public User createUserDetails(UserInfo user) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
