@@ -19,26 +19,31 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 	 */
 	Schedule findById(long id);
 	/**
-	 * @return 勤怠情報リスト。
+	 * @param date 日付。
+	 * @param user 職員情報。
+	 * @return 勤怠情報。
 	 */
-	List<Schedule>findAllByOrderByUserInfoUsername();
-	/**
-	 * @return 勤怠情報リスト。
-	 */
-	List<Schedule>findAllByOrderByScheduleDate();
+	Schedule findByScheduleDateAndUserInfo(Date date,UserInfo user);
+
 	/**
 	 * @param user 職員情報。
 	 * @return 勤怠情報リスト。
 	 */
 	List<Schedule> findByUserInfo(UserInfo user);
 	/**
-	 * @param date 日付
 	 * @param user 職員情報。
-	 * @return 勤怠情報。
+	 * @return 勤怠情報リスト。
 	 */
-	Schedule findByScheduleDateAndUserInfo(Date date,UserInfo user);
+	List<Schedule> findByUserInfoAndScheduleTimeIsNotNull(UserInfo user);
 	/**
-	 * @param id 職員情報テーブルID。
+	 * @param start 開始日。
+	 * @param end 終了日。
+	 * @return 勤怠情報リスト。
+	 */
+	List<Schedule> findByScheduleDateBetweenOrderByUserInfoUsername(Date start,Date end);
+
+	/**
+	 * @param id 勤怠情報テーブルID。
 	 */
 	@Transactional
 	void deleteByUserInfoId(long id);
@@ -48,9 +53,4 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 	 */
 	@Transactional
 	void deleteByUserInfoAndScheduleDate(UserInfo user, Date date);
-	/**
-	 * @param user 職員情報。
-	 * @return 勤怠情報リスト。
-	 */
-	List<Schedule> findByUserInfoAndScheduleTimeIsNotNull(UserInfo user);
 }

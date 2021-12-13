@@ -54,6 +54,7 @@ public class AdminController {
      */
     @GetMapping("/admin/allSchedule")//全職員の全予定がわかるカレンダー
     public String allSchedule() {
+
         return "admin/allSchedule";
     }
     
@@ -76,7 +77,7 @@ public class AdminController {
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		sr.setEnd(calendar.getTime());
 		
-		sr.setUserList(userRepository.findAllByOrderByUsername());
+		sr.setUserList(userRepository.findByUsernameNotOrderByUsername("test"));
 		model.addAttribute("calendarBuf",sr);
 		
         return "admin/scheduleRegister";
@@ -101,12 +102,21 @@ public class AdminController {
     	                new InputStreamReader(
     	                url.openStream()));
     	String inputLine;
+    	int last = 0;
     	List<String> bufList = new ArrayList<>();
     	while ((inputLine = in.readLine()) != null) {
     		if(inputLine.equals("{") || inputLine.equals("}")) {
     			continue;
     		}
     		bufList.add(inputLine.substring(5,15));
+    		last= Integer.parseInt(inputLine.substring(5,9));
+    	}
+    	for(int i = 0; i < 3; i++) {
+    		bufList.add(last - i + "-01-02");
+    		bufList.add(last - i + "-01-03");
+    		bufList.add(last - i + "-12-29");
+    		bufList.add(last - i + "-12-30");
+    		bufList.add(last - i + "-12-31");
     	}
     	//ここまで
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -292,7 +302,7 @@ public class AdminController {
      */
     @GetMapping("/admin/attendanceManage")//勤怠管理画面の出力
     public String attendanceManage(Model model,ScheduleRegister sr) throws ParseException {
-    	model.addAttribute("users", userRepository.findAll());
+    	model.addAttribute("users", userRepository.findByUsernameNot("test"));
     	
     	Date thisYear = new Date();
     	Calendar calendar = Calendar.getInstance();
@@ -303,7 +313,7 @@ public class AdminController {
     	calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     	sr.setEnd(calendar.getTime());
     	
-    	sr.setUserList(userRepository.findAllByOrderByUsername());
+    	sr.setUserList(userRepository.findByUsernameNotOrderByUsername("test"));
     	model.addAttribute("calendarBuf",sr);
     	return "admin/attendanceManage";
     }
@@ -496,7 +506,7 @@ public class AdminController {
 																	}
 																});  
     	
-        model.addAttribute("userlist", userRepository.findAllByOrderByUsername());
+        model.addAttribute("userlist", userRepository.findByUsernameNotOrderByUsername("test"));
         model.addAttribute("selecteduser", userInfo);
     	model.addAttribute("selectyearlist", yearsSet.stream().sorted(Comparator.reverseOrder()).toArray());					//年の選択候補（降順）
     	model.addAttribute("selectedyear", selectedyear);																		//選択した年（デフォルトは今年）

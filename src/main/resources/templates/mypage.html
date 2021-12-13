@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8" th:remove="tag">
 </head>
+
 <body>
 
   <!-- サイドバーの表示 -->
@@ -27,16 +28,15 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
               <label th:text="${users.firstName}"></label>さん お疲れ様です。
-                
-                <!-- <a th:href="@{/demo}" class="btn btn-danger">
-            	<i class="bi bi-trach-fill"></i>
-            	デモ</a> -->
+              <button class="btn-secondary btn-sm fc-event-title-container" data-bs-toggle="tooltip" data-bs-placement="right" 
+              onclick="return alert('祝日の反映は前後1年です。')">
+				i
+				</button>
               </h6>
             </div>
              <!-- カレンダーの表示 -->
-               <div layout:fragment="mySchedule">
+                 <script th:src="@{/js/mySchedule.js}"></script>
                <div id='mySchedule'></div>
-               </div>
           </div>
 		</div>
 	  </div>

@@ -8,6 +8,7 @@
   <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}" rel="stylesheet">
   <link th:href="@{/css/app.css}" rel="stylesheet">
+  <link th:href="@{/css/attendancedook.css}" rel="stylesheet">
  <!-- FullCallendarのために追加してみた -->
   <link th:href="@{/webjars/fullcalendar/5.9.0/main.css}" rel='stylesheet'>
   <link th:href="@{/webjars/fortawesome__fontawesome-free/5.15.4/css/all.css}" rel='stylesheet'>
@@ -25,22 +26,10 @@
 <link rel="shortcut icon" th:href="@{/img/photo.png}">
 </head>
 <body>
-  <!-- mypageの配置 -->
-  <div layout:fragment="mySchedule">
-    <script th:src="@{/js/mySchedule.js}"></script>
-  </div>
-  <!-- 全職員全予定の配置 -->
-  <div layout:fragment="allSchedule">
-    <script th:src="@{/js/allSchedule.js}"></script>
-  </div>
-   <!-- admin全職員全予定の配置 -->
-  <div layout:fragment="adminAllSchedule">
-    <script th:src="@{/js/adminAllSchedule.js}"></script>
-  </div>
-  <!--testの配置 -->
-  <div layout:fragment="test">
-    <script th:src="@{/js/test.js}"></script>
-  </div>
+
+
+
+
   <!-- サイドバーの配置 -->
   <div layout:fragment="sidebar">
   </div>

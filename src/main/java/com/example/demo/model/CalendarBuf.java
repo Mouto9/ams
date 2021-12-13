@@ -29,7 +29,6 @@ public class CalendarBuf {
 	
 	private String attend;
 	
-	
 	public int hashCode(){
 		int result = 37;
 		result = result * 31 + start.hashCode();

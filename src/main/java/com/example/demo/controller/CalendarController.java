@@ -9,12 +9,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Attendance;
@@ -96,10 +98,13 @@ public class CalendarController {
 }
     /**
      * 勤怠情報用
+     * @param start 開始日。
+     * @param end 終了日。
      * @return 全職員の全勤怠情報
+     * @throws ParseException パースエラー。
      */
     @GetMapping("/allScheduleURL")
-    public String getAllSchedule() {
+    public String getAllSchedule(@RequestParam("start") String start,@RequestParam("end") String end) throws ParseException {
     	String jsonMsg = null;
     	try {
             // FullCalendarにエンコード済み文字列を渡す
@@ -107,41 +112,40 @@ public class CalendarController {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             mapper.setDateFormat(df);
             //長いからlistに格納しなおす
-            List<Schedule> scheduleList = new ArrayList<>();
-            scheduleList = scheduleRepository.findAllByOrderByUserInfoUsername();//職員ID順
+            List<Schedule> scheduleList = getList(start,end);//職員ID順
             //Scheduleを全部　ここからjson化
             List<CalendarBuf> bufList = new ArrayList<>();
             for(Schedule s : scheduleList) {
-            	Calendar calendar = Calendar.getInstance();
-            	calendar.setTime(s.getScheduleDate());
-            	calendar.add(Calendar.DAY_OF_YEAR,1);
             	CalendarBuf buf = new CalendarBuf();
-            	if(attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(s.getScheduleDate(),calendar.getTime(),s.getUserInfo())) {
+            	if(attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(s.getScheduleDate(),addCalendar(s.getScheduleDate()),s.getUserInfo())) {
             		buf.setTitle("出済" +"  "+ s.getUserInfo().getLastName() + " " + s.getUserInfo().getFirstName());
             	}else {
             		buf.setTitle(s.getScheduleName() +"  "+ s.getUserInfo().getLastName() + " " + s.getUserInfo().getFirstName());
             	}
-            	buf.setStart(s.getScheduleDate());
             	if(s.getScheduleName().equals("休暇") || s.getScheduleName().equals("年休") || s.getScheduleName().equals("時休")) {
             		buf.setColor("#378006");
             	}
+            	buf.setStart(s.getScheduleDate());
             	bufList.add(buf);
             	
             }
-            
+
             jsonMsg = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bufList);
             } catch (IOException ioex) {
             System.out.println(ioex.getMessage());
             }
     	return jsonMsg;
     }
+
     /**
      * 勤怠情報用。
+     * @param start 開始日。
+     * @param end 終了日。
      * @return 出済の人数。
      * @throws ParseException パースエラー。
      */
     @GetMapping("/number")//人数と出勤を見れるように
-    public String getAttendedSum() throws ParseException {
+    public String getAttendedSum(@RequestParam("start") String start,@RequestParam("end") String end) throws ParseException {
     	String jsonMsg = null;
     	try {
             // FullCalendarにエンコード済み文字列を渡す
@@ -150,17 +154,13 @@ public class CalendarController {
             mapper.setDateFormat(df);
             //長いからlistに格納しなおす
             List<Schedule> scheduleList = new ArrayList<>();
-            scheduleList = scheduleRepository.findAll();
+            getList(start,end).stream()
+            .filter(i -> attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(i.getScheduleDate(),addCalendar(i.getScheduleDate()),i.getUserInfo()))
+            .forEach(i -> scheduleList.add(i));
+            
             Map<CalendarBuf, Integer> map = new HashMap<>();
 
             for(Schedule s : scheduleList) {
-            	Calendar calendar = Calendar.getInstance();
-            	calendar.setTime(s.getScheduleDate());
-            	calendar.add(Calendar.DAY_OF_YEAR,1);
-            	if(!attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(s.getScheduleDate(),calendar.getTime(),s.getUserInfo())) {//出勤時刻が
-            		continue;
-            	}
-            	
             	CalendarBuf buf = new CalendarBuf();
             	buf.setStart(s.getScheduleDate());
             	buf.setTitle("出済");
@@ -187,12 +187,14 @@ public class CalendarController {
     	return jsonMsg;
     }
     /**
-     * 勤怠情報用。
+ 	* 勤怠情報用。
+     * @param start 開始日。
+     * @param end 終了日。
      * @return 未出及び勤怠情報の人数。
      * @throws ParseException パースエラー。
      */
     @GetMapping("/notAttend")
-    public String getNotAttendSum() throws ParseException {
+    public String getNotAttendSum(@RequestParam("start") String start,@RequestParam("end") String end) throws ParseException {
     	String jsonMsg = null;
     	try {
             // FullCalendarにエンコード済み文字列を渡す
@@ -201,16 +203,12 @@ public class CalendarController {
             mapper.setDateFormat(df);
             //長いからlistに格納しなおす
             List<Schedule> scheduleList = new ArrayList<>();
-            scheduleList = scheduleRepository.findAll();
+            getList(start,end).stream()
+            .filter(i -> !attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(i.getScheduleDate(),addCalendar(i.getScheduleDate()),i.getUserInfo()))
+            .forEach(i -> scheduleList.add(i));
+            
             Map<CalendarBuf, Integer> bufList = new HashMap<>();
             for(Schedule i : scheduleList) {
-            	Calendar calendar = Calendar.getInstance();
-            	calendar.setTime(i.getScheduleDate());
-            	calendar.add(Calendar.DAY_OF_YEAR,1);
-            	if(attendanceRepository.existsByAttendanceTimeBetweenAndUserInfo(i.getScheduleDate(),calendar.getTime(),i.getUserInfo())) {
-            	
-            		continue;
-            	}
             	CalendarBuf c = new CalendarBuf();
             	c.setStart(i.getScheduleDate());
             	c.setTitle(i.getScheduleName());
@@ -265,24 +263,52 @@ public class CalendarController {
     mapper.setDateFormat(df);
     
 	List<CalendarBuf> bufList = new ArrayList<>();//jsonに突っ込むリスト
+	int year = 0;
 	while ((inputLine = in.readLine()) != null) {
 		if(inputLine.equals("{") || inputLine.equals("}")) {
 			continue;
 		}
 		CalendarBuf buf = new CalendarBuf();
-	if(inputLine.substring(inputLine.length() - 1).equals(",")){
+		if(inputLine.substring(inputLine.length() - 1).equals(",")){
 			buf.setTitle(inputLine.substring(19,inputLine.length() - 2));
 		}else {
 			buf.setTitle(inputLine.substring(19,inputLine.length() - 1));
+			
 		}
-			buf.setStart(df.parse(inputLine.substring(5,15)));
+		buf.setStart(df.parse(inputLine.substring(5,15)));
+		year = Integer.parseInt(inputLine.substring(5,9));
 		buf.setColor("#F9ac9e");
 		bufList.add(buf);
+	}
+	for(int i = 0; i < 3; i++) {
+		bufList.add(json("休日",df.parse(year - i + "-01-02"),"#F9ac9e"));
+		bufList.add(json("休日",df.parse(year - i + "-01-03"),"#F9ac9e"));
+		bufList.add(json("休日",df.parse(year - i + "-12-29"),"#F9ac9e"));
+		bufList.add(json("休日",df.parse(year - i + "-12-30"),"#F9ac9e"));
+		bufList.add(json("休日",df.parse(year - i + "-12-31"),"#F9ac9e"));
 	}
     jsonMsg = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bufList);
 	in.close();
 	
 	return jsonMsg;
 	}
+    private CalendarBuf json(String title , Date start,String color) {
+    	CalendarBuf buf = new CalendarBuf();
+    	buf.setTitle(title);
+    	buf.setStart(start);
+    	buf.setColor(color);
+    	return buf;
+    }
 
+    private Date addCalendar(Date date) {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(date);
+    	calendar.add(Calendar.DAY_OF_YEAR, 1);
+    	return calendar.getTime();
+    }
+    private List<Schedule> getList(String start , String end) throws ParseException{
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    	return scheduleRepository.findByScheduleDateBetweenOrderByUserInfoUsername(sdf.parse(start), sdf.parse(end));
+    }
+ 
 }
