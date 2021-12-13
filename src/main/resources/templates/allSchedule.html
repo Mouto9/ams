@@ -4,6 +4,8 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
+  
+
 </head>
 <body>
 
@@ -27,13 +29,16 @@
             <div class="card-header">
               <h6 class="text-navy my-2">
                 勤怠情報
+              <button class="btn-secondary btn-sm fc-event-title-container" data-bs-toggle="tooltip" data-bs-placement="right" 
+              onclick="return alert('祝日の反映は前後1年です。')">
+				i
+				</button>
               </h6>
             </div>
              <!-- カレンダーの表示 -->
-               <div layout:fragment="allSchedule">
+                 <script th:src="@{/js/allSchedule.js}"></script>
                <div id='allSchedule'></div>
                </div>
-          </div>
         </div>
       </div>
     </div>

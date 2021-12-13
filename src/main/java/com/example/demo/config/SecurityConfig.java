@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // 「/register」を追加
-                .antMatchers("/login", "/register").permitAll()
+                .antMatchers("/login").permitAll()
                 // 「/admin」は、ADMINユーザだけアクセス可能にします
                 .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated()

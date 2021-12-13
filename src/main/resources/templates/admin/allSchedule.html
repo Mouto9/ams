@@ -4,11 +4,7 @@
   layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" th:remove="tag">
-  <style>
-#info:hover{
-	color : orabge;
-}
-</style>
+
 </head>
 <body>
 
@@ -31,20 +27,21 @@
           <div class="card shadow">
             <div class="card-header">
               <h6 class="text-navy my-2">
-                カレンダー
-              <a class="btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="祝日の反映は前後1年です。">
+                勤怠情報
+              <button class="btn-secondary btn-sm fc-event-title-container" data-bs-toggle="tooltip" data-bs-placement="right" 
+              onclick="return alert('祝日の反映は前後1年です。')">
 				i
-				</a>
+				</button>
               </h6>
             </div>
              <!-- カレンダーの表示 -->
-               <div layout:fragment="adminAllSchedule">
+			   <!-- admin全職員全予定の配置 -->
+			    <script th:src="@{/js/adminAllSchedule.js}"></script>
                <div id='adminAllSchedule'></div>
                </div>
           </div>
         </div>
       </div>
-    </div>
   </main>
 </body>
 </html>

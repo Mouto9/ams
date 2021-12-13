@@ -18,24 +18,23 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 	 * @return 出勤情報。
 	 */
 	Attendance findById(long id);
+
 	/**
+	 * @param user 職員情報。
 	 * @return 出勤情報リスト。
 	 */
-	List<Attendance>findAllByOrderByAttendanceTimeDesc();
+	List<Attendance> findByUserInfo(UserInfo user);
+
 	/**
-	 * @param start 開始時間。
-	 * @param end 終了時間。
+	 * @param start 開始日。
+	 * @param end 終了日。
 	 * @param user 職員情報。
 	 * @return 真偽値。
 	 */
 	Boolean existsByAttendanceTimeBetweenAndUserInfo(Date start,Date end,UserInfo user);
+
 	/**
-	 * @param user 職員情報。
-	 * @return 職員情報リスト。
-	 */
-	List<Attendance> findByUserInfo(UserInfo user);
-	/**
-	 * @param id 職員情報テーブルID。
+	 * @param id 出勤情報テーブルID。
 	 */
 	@Transactional
 	void deleteByUserInfoId(long id);

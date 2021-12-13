@@ -1,4 +1,7 @@
 /* Color */
+.fc-event-title-container:hover{
+	cursor:pointer;
+}
 .fc-day-sat {
     background-color: #eaf4ff;
 }

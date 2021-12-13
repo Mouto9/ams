@@ -47,7 +47,10 @@
 		                </thead>
 		                <tbody>
 			                <tr th:each="attendance : *{attendance}" th:object="${attendance}" >
-						                    <td th:text="*{#calendars.format(attendanceTime, 'yyyy-MM-dd HH:mm')}"></td>
+						                    <td>
+						                    <time datetime="*{attendanceTime}" th:text="*{#calendars.format(attendanceTime, 'yyyy-MM-dd HH:mm')}">
+						                    </time>
+						                    </td>
 						                    <td>
 						                    <a th:href="@{/admin/attendEdit/{id}(id=*{id})}" class="btn btn-outline-primary btn-sm m">
 							                    	<i class="bi bi-trach-fill"></i>

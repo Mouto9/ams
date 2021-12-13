@@ -40,7 +40,7 @@ public class UserManageController {
      */
     @GetMapping("/admin/userManage")//職員一覧画面の出力
     public String showAdminList(Model model,UserInfo user) throws ParseException {
-    	model.addAttribute("users", userRepository.findAll());
+    	model.addAttribute("users", userRepository.findByUsernameNot("test"));
     	model.addAttribute("test", user);
     	return "admin/userManage";
     }
