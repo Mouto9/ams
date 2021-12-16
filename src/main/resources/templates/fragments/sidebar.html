@@ -40,7 +40,7 @@
             </li>
             
             
- 			<li  sec:authorize="hasRole('ADMIN')" class="nav-item">            
+ 			<li  sec:authorize="hasRole('ADMIN')" th:unless="${#authentication.principal.Username.equals('test')}" class="nav-item">            
               <a th:href="@{/admin/attendancebook}" class="nav-link text-white">
                 <i class="bi bi-printer me-2"></i>
                 帳票
