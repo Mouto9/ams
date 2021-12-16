@@ -459,7 +459,12 @@ public class AdminController {
      */
     @GetMapping("/admin/attendancebook")
     public String showAttendanceBook(Authentication loginUser, Model model) {
-    	changeAttendanceBook(userRepository.findByUsername(loginUser.getName()).getId(), Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Calendar.getInstance().get(Calendar.MONTH) > 6 ? "後期" : "前期", model);
+    	long userId = 0L;
+    	if(loginUser.getName().equals("test")) {
+    		userId = userRepository.findByUsernameNotOrderByUsername("test").get(0).getId();
+    	}
+    	userId = userRepository.findByUsername(loginUser.getName()).getId();
+    	changeAttendanceBook(userId, Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Calendar.getInstance().get(Calendar.MONTH) > 6 ? "後期" : "前期", model);
     	
     	return "attendancedook";
     }
